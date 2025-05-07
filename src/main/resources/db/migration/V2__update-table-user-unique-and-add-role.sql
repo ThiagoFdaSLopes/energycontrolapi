@@ -1,3 +1,13 @@
+CREATE SEQUENCE SQ_USER START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE TBL_USERS (
+                           USER_ID       NUMBER(19) NOT NULL,
+                           USER_NAME     VARCHAR2(255 BYTE),
+                           USER_PASSWORD VARCHAR2(255 BYTE),
+                           USER_EMAIL    VARCHAR2(255 BYTE),
+                           CONSTRAINT PK_TBL_USERS PRIMARY KEY (USER_ID)
+);
+
 ALTER TABLE TBL_USERS
     ADD USER_ROLE VARCHAR2(100) DEFAULT 'USER'
     ADD CONSTRAINT email_unique UNIQUE (USER_EMAIL);

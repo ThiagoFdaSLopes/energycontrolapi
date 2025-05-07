@@ -35,7 +35,7 @@ public class ApplicationExceptionHandler {
 
         Map<String, String> errorMap = new HashMap<>();
 
-        errorMap.put("erro", "Usuário já cadastrado!");
+        errorMap.put("erro", "Falha de integridade");
 
         return errorMap;
     }

@@ -20,16 +20,16 @@ public class Consumo {
 
     @ManyToOne
     @JoinColumn(name = "T_EQUIPAMENTOS_ID_EQUIP", nullable = false)
-    //private TEquipamento equipamento;
+    private TEquipamento equipamento;
 
-//    public Consumo() {
-//    }
+    public Consumo() {
+    }
 
-//    public Consumo(Timestamp dataHora, Double kwConsumo, TEquipamento equipamento) {
-//        this.dataHora = dataHora;
-//        this.kwConsumo = kwConsumo;
-//        this.equipamento = equipamento;
-//    }
+    public Consumo(Timestamp dataHora, Double kwConsumo, TEquipamento equipamento) {
+        this.dataHora = dataHora;
+        this.kwConsumo = kwConsumo;
+        this.equipamento = equipamento;
+    }
 
     public Long getId() {
         return id;
@@ -55,21 +55,21 @@ public class Consumo {
         this.kwConsumo = kwConsumo;
     }
 
-//    public TEquipamento getEquipamento() {
-//        return equipamento;
-//    }
-//
-//    public void setEquipamento(TEquipamento equipamento) {
-//        this.equipamento = equipamento;
-//    }
+    public TEquipamento getEquipamento() {
+        return equipamento;
+    }
 
-//    @Override
-//    public String toString() {
-//        return "Consumo{" +
-//                "id=" + id +
-//                ", dataHora=" + dataHora +
-//                ", kwConsumo=" + kwConsumo +
-//                ", equipamento=" + (equipamento != null ? equipamento.getIdEquip() : null) +
-//                '}';
-//    }
+    public void setEquipamento(TEquipamento equipamento) {
+        this.equipamento = equipamento;
+    }
+
+    @Override
+    public String toString() {
+        return "Consumo{" +
+                "id=" + id +
+                ", dataHora=" + dataHora +
+                ", kwConsumo=" + kwConsumo +
+                ", equipamento=" + (equipamento != null ? equipamento.getIdEquip() : null) +
+                '}';
+    }
 }

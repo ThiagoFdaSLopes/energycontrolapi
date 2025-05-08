@@ -1,6 +1,5 @@
 package br.com.energycontrol.EnergyControl.Service;
 
-import br.com.energycontrol.EnergyControl.Model.User;
 import br.com.energycontrol.EnergyControl.Repository.TSetorRepository;
 import br.com.energycontrol.EnergyControl.Model.TSetor;
 import org.springframework.beans.factory.annotation.Autowired;

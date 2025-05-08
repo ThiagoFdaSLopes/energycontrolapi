@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +32,35 @@ public class ApplicationExceptionHandler {
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public Map<String, String> handleIntegrityViolation(){
-
+    public Map<String, String> handleIntegrityViolation(DataIntegrityViolationException ex) {
         Map<String, String> errorMap = new HashMap<>();
 
-        errorMap.put("erro", "Falha de integridade");
+        Throwable cause = ex.getRootCause();
+        String errorMessage = "Violação de integridade de dados detectada.";
 
+        if (cause instanceof SQLException sqlException) {
+            int errorCode = sqlException.getErrorCode();
+            String sqlMessage = sqlException.getMessage();
+
+            switch (errorCode) {
+                case 1:
+                    errorMessage = "Registro duplicado. Um log com esse identificador já existe.";
+                    break;
+                case 1400:
+                    errorMessage = "Um campo obrigatório não foi preenchido.";
+                    break;
+                case 2291:
+                    errorMessage = "Referência inválida. O registro relacionado não existe.";
+                    break;
+                default:
+                    errorMessage = "Erro de integridade: " + sqlMessage;
+                    break;
+            }
+        } else if (cause != null) {
+            errorMessage = "Erro de integridade: " + cause.getMessage();
+        }
+
+        errorMap.put("erro", errorMessage);
         return errorMap;
     }
 }

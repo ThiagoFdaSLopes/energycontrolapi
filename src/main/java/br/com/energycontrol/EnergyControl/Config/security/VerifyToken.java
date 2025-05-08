@@ -26,19 +26,36 @@ public class VerifyToken extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
-        String token = "";
+        String token = null;
 
-        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
-            token = null;
-        } else {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.replace("Bearer ", "").trim();
-            String login = tokenService.validateToken(token);
-            UserDetails userDetails = userRepository.findByEmail(login);
-
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
+            try {
+                String login = tokenService.validateToken(token);
+                if (login != null && !login.isEmpty()) {
+                    UserDetails userDetails = userRepository.findByEmail(login);
+                    if (userDetails != null) {
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        filterChain.doFilter(request, response);
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.getWriter().write("Usuário não encontrado para o login: " + login);
+                        return;
+                    }
+                } else {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("Token inválido ou usuário não encontrado");
+                    return;
+                }
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Erro ao validar o token: " + e.getMessage());
+                return;
+            }
+        } else {
+            filterChain.doFilter(request, response);
         }
-        filterChain.doFilter(request, response);
     }
 }

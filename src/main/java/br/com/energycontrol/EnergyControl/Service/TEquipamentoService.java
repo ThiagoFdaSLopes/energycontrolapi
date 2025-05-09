@@ -50,7 +50,6 @@ public class TEquipamentoService {
                     existing.setNmEquipamento(equipamento.getNmEquipamento());
                     existing.setTipo(equipamento.getTipo());
 
-                    // Busca o setor completo antes de atribuir
                     Long idSetor = equipamento.getSetor().getIdSet();
                     TSetor setor = setorRepo.findById(idSetor)
                             .orElseThrow(() -> new RuntimeException("Setor não encontrado com o id " + idSetor));

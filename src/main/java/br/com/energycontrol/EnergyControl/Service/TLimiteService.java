@@ -24,7 +24,6 @@ public class TLimiteService {
     }
 
     public TLimite save(TLimite limite) {
-        // Busca o equipamento completo antes de salvar
         Long idEquip = limite.getEquipamento().getIdEquip();
         TEquipamento equipamento = equipamentoRepo.findById(idEquip)
                 .orElseThrow(() -> new RuntimeException("Equipamento não encontrado com o id " + idEquip));
@@ -51,7 +50,6 @@ public class TLimiteService {
                     existing.setHrInicio(dto.getHrInicio());
                     existing.setHrFim(dto.getHrFim());
 
-                    // Se veio equipamento no payload, busca o objeto completo para atribuir
                     if (dto.getEquipamento() != null) {
                         Long idEquip = dto.getEquipamento().getIdEquip();
                         TEquipamento equipamento = equipamentoRepo.findById(idEquip)

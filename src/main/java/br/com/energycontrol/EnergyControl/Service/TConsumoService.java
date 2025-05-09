@@ -2,7 +2,11 @@ package br.com.energycontrol.EnergyControl.Service;
 
 import br.com.energycontrol.EnergyControl.Dto.ConsumoCadastroDTO;
 import br.com.energycontrol.EnergyControl.Model.Consumo;
+import br.com.energycontrol.EnergyControl.Model.TEquipamento;
+import br.com.energycontrol.EnergyControl.Model.TSetor;
 import br.com.energycontrol.EnergyControl.Repository.TConsumoRepository;
+import br.com.energycontrol.EnergyControl.Repository.TEquipamentoRepository;
+import br.com.energycontrol.EnergyControl.Repository.TSetorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +17,14 @@ import java.util.Optional;
 public class TConsumoService {
 
     private final TConsumoRepository repository;
+    private final TEquipamentoRepository equipamentoRepository;
+    private final TSetorRepository setorRepository;
 
     @Autowired
-    public TConsumoService(TConsumoRepository repository) {
+    public TConsumoService(TConsumoRepository repository, TEquipamentoRepository equipamentoRepository, TSetorRepository setorRepository) {
         this.repository = repository;
+        this.equipamentoRepository = equipamentoRepository;
+        this.setorRepository = setorRepository;
     }
 
     public List<Consumo> listarTodos() {
@@ -28,6 +36,16 @@ public class TConsumoService {
     }
 
     public Consumo salvar(Consumo consumo) {
+        Long idEquip = consumo.getEquipamento().getIdEquip();
+        TEquipamento equipamento = equipamentoRepository.findById(idEquip)
+                .orElseThrow(() -> new RuntimeException("Equipamento não encontrado com o id " + idEquip));
+
+        Long idSetor = equipamento.getSetor().getIdSet();
+        TSetor setor = setorRepository.findById(idSetor)
+                .orElseThrow(() -> new RuntimeException("Setor não encontrado com o id " + idSetor));
+
+        equipamento.setSetor(setor);
+        consumo.setEquipamento(equipamento);
         return repository.save(consumo);
     }
 

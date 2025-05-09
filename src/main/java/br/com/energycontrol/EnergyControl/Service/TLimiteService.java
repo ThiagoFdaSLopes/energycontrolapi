@@ -1,7 +1,9 @@
 package br.com.energycontrol.EnergyControl.Service;
 
 import br.com.energycontrol.EnergyControl.Model.TLimite;
+import br.com.energycontrol.EnergyControl.Model.TEquipamento;
 import br.com.energycontrol.EnergyControl.Repository.TLimiteRepository;
+import br.com.energycontrol.EnergyControl.Repository.TEquipamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +14,21 @@ import java.util.Optional;
 public class TLimiteService {
 
     private final TLimiteRepository repository;
+    private final TEquipamentoRepository equipamentoRepo;
 
     @Autowired
-    public TLimiteService(TLimiteRepository repository) {
-        this.repository = repository;
+    public TLimiteService(TLimiteRepository repository,
+                          TEquipamentoRepository equipamentoRepo) {
+        this.repository     = repository;
+        this.equipamentoRepo = equipamentoRepo;
     }
 
     public TLimite save(TLimite limite) {
+        // Busca o equipamento completo antes de salvar
+        Long idEquip = limite.getEquipamento().getIdEquip();
+        TEquipamento equipamento = equipamentoRepo.findById(idEquip)
+                .orElseThrow(() -> new RuntimeException("Equipamento não encontrado com o id " + idEquip));
+        limite.setEquipamento(equipamento);
         return repository.save(limite);
     }
 
@@ -34,13 +44,21 @@ public class TLimiteService {
         repository.deleteById(id);
     }
 
-    public TLimite update(Long id, TLimite limite) {
+    public TLimite update(Long id, TLimite dto) {
         return repository.findById(id)
                 .map(existing -> {
-                    existing.setLtConsumo(limite.getLtConsumo());
-                    existing.setHrInicio(limite.getHrInicio());
-                    existing.setHrFim(limite.getHrFim());
-                    existing.setEquipamento(limite.getEquipamento());
+                    existing.setLtConsumo(dto.getLtConsumo());
+                    existing.setHrInicio(dto.getHrInicio());
+                    existing.setHrFim(dto.getHrFim());
+
+                    // Se veio equipamento no payload, busca o objeto completo para atribuir
+                    if (dto.getEquipamento() != null) {
+                        Long idEquip = dto.getEquipamento().getIdEquip();
+                        TEquipamento equipamento = equipamentoRepo.findById(idEquip)
+                                .orElseThrow(() -> new RuntimeException("Equipamento não encontrado com o id " + idEquip));
+                        existing.setEquipamento(equipamento);
+                    }
+
                     return repository.save(existing);
                 })
                 .orElseThrow(() -> new RuntimeException("Limite não encontrado com o id " + id));

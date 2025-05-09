@@ -38,7 +38,6 @@ public class TEquipamentoController {
         return ResponseEntity.ok(lista);
     }
 
-
     @PutMapping("/{id}")
     public ResponseEntity<TEquipamento> atualizarEquipamento(@PathVariable Long id, @RequestBody TEquipamento equipamento) {
         try {

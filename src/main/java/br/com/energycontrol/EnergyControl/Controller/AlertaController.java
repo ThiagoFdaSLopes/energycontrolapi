@@ -1,10 +1,10 @@
-package br.com.energycontrol.EnergyControl.Controller; // Ajuste o pacote conforme a estrutura do seu projeto
+package br.com.energycontrol.EnergyControl.Controller;
 
-import br.com.energycontrol.EnergyControl.DTO.AlertaDTO;
+import br.com.energycontrol.EnergyControl.Dto.AlertaDTO;
 import br.com.energycontrol.EnergyControl.Model.Alerta;
 import br.com.energycontrol.EnergyControl.Model.TLimite;
 import br.com.energycontrol.EnergyControl.Service.AlertaService;
-import br.com.energycontrol.EnergyControl.Service.TLimiteService; // Importe o serviço de Limite
+import br.com.energycontrol.EnergyControl.Service.TLimiteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -75,10 +75,21 @@ public class AlertaController {
         alerta.setDescricaoAlerta(alertaDTO.descricaoAlerta());
 
         // Busca a entidade TLimite pelo ID fornecido no DTO
-        TLimite limite = limiteService.buscarPorId(alertaDTO.limiteId())
+        TLimite limite = limiteService.searchById(alertaDTO.limiteId())
                 .orElseThrow(() -> new RuntimeException("Limite não encontrado com ID: " + alertaDTO.limiteId()));
         alerta.setLimite(limite);
 
         return alerta;
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AlertaDTO> atualizar(@PathVariable Long id, @RequestBody AlertaDTO alertaDTO) {
+        Alerta alertaAtualizado = alertaService.atualizar(id, alertaDTO);
+        if (alertaAtualizado != null) {
+            return new ResponseEntity<>(converterParaDTO(alertaAtualizado), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

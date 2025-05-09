@@ -1,5 +1,6 @@
 package br.com.energycontrol.EnergyControl.Controller;
 
+import br.com.energycontrol.EnergyControl.Dto.ConsumoCadastroDTO;
 import br.com.energycontrol.EnergyControl.Model.Consumo;
 import br.com.energycontrol.EnergyControl.Service.TConsumoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,9 @@ public class TConsumoController {
     }
 
     @PostMapping
-    public ResponseEntity<Consumo> salvar(@RequestBody Consumo consumo) {
-        Consumo novoConsumo = consumoService.salvar(consumo);
+    public ResponseEntity<Consumo> salvar(@RequestBody ConsumoCadastroDTO consumoCadastroDTO) {
+        Consumo novoConsumo = consumoService.converterParaEntidade(consumoCadastroDTO);
+        Consumo salvo = consumoService.salvar(novoConsumo);
         return new ResponseEntity<>(novoConsumo, HttpStatus.CREATED);
     }
 
@@ -44,5 +46,19 @@ public class TConsumoController {
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         consumoService.deletar(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Consumo> atualizar(@PathVariable Long id, @RequestBody ConsumoCadastroDTO consumoCadastroDTO) {
+        Optional<Consumo> consumoExistente = consumoService.buscarPorId(id);
+
+        if (consumoExistente.isPresent()) {
+            Consumo consumoParaAtualizar = consumoService.converterParaEntidade(consumoCadastroDTO);
+            consumoParaAtualizar.setId(id);
+            Consumo consumoAtualizado = consumoService.salvar(consumoParaAtualizar);
+            return new ResponseEntity<>(consumoAtualizado, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

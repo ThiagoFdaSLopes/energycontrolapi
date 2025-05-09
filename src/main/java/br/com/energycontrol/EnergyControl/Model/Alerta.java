@@ -1,7 +1,7 @@
 package br.com.energycontrol.EnergyControl.Model;
 
 import jakarta.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "T_ALERTAS")
@@ -13,7 +13,7 @@ public class Alerta {
     private Long idAlerta;
 
     @Column(name = "DT_HORA", nullable = false)
-    private Timestamp dataHora;
+    private LocalDateTime dataHora;
 
     @Column(name = "DS_ALERTA", length = 200, nullable = false)
     private String descricaoAlerta;
@@ -25,7 +25,7 @@ public class Alerta {
     public Alerta() {
     }
 
-    public Alerta(Timestamp dataHora, String descricaoAlerta, TLimite limite) {
+    public Alerta(LocalDateTime dataHora, String descricaoAlerta, TLimite limite) {
         this.dataHora = dataHora;
         this.descricaoAlerta = descricaoAlerta;
         this.limite = limite;
@@ -39,11 +39,11 @@ public class Alerta {
         this.idAlerta = idAlerta;
     }
 
-    public Timestamp getDataHora() {
+    public LocalDateTime getDataHora() {
         return dataHora;
     }
 
-    public void setDataHora(Timestamp dataHora) {
+    public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
     }
 

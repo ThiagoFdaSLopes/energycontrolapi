@@ -1,5 +1,6 @@
 package br.com.energycontrol.EnergyControl.Service;
 
+import br.com.energycontrol.EnergyControl.Dto.ConsumoCadastroDTO;
 import br.com.energycontrol.EnergyControl.Model.Consumo;
 import br.com.energycontrol.EnergyControl.Repository.TConsumoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,31 @@ public class TConsumoService {
         return repository.save(consumo);
     }
 
+    public Consumo converterParaEntidade(ConsumoCadastroDTO dto) {
+        Consumo consumo = new Consumo();
+        consumo.setDataHora(dto.dataHora());
+        consumo.setKwConsumo(dto.kwConsumo());
+        consumo.setEquipamento(dto.equipamento());
+        return consumo;
+    }
+
     public void deletar(Long id) {
         repository.deleteById(id);
     }
+
+    public Consumo atualizarConsumo(Long id, ConsumoCadastroDTO dto) {
+        Optional<Consumo> consumoExistente = repository.findById(id);
+
+        if (consumoExistente.isPresent()) {
+            Consumo consumoParaAtualizar = consumoExistente.get();
+            consumoParaAtualizar.setDataHora(dto.dataHora());
+            consumoParaAtualizar.setKwConsumo(dto.kwConsumo());
+            consumoParaAtualizar.setEquipamento(dto.equipamento());
+            return repository.save(consumoParaAtualizar);
+        } else {
+
+            return null;
+        }
+    }
+
 }

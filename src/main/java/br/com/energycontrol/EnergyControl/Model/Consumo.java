@@ -1,7 +1,9 @@
 package br.com.energycontrol.EnergyControl.Model;
 
 import jakarta.persistence.*;
-import java.sql.Timestamp;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "T_CONSUMO")
@@ -13,7 +15,8 @@ public class Consumo {
     private Long id;
 
     @Column(name = "DT_HORA", nullable = false)
-    private Timestamp dataHora;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime dataHora;
 
     @Column(name = "KW_CONSUMO", nullable = false)
     private Double kwConsumo;
@@ -25,7 +28,7 @@ public class Consumo {
     public Consumo() {
     }
 
-    public Consumo(Timestamp dataHora, Double kwConsumo, TEquipamento equipamento) {
+    public Consumo(LocalDateTime dataHora, Double kwConsumo, TEquipamento equipamento) {
         this.dataHora = dataHora;
         this.kwConsumo = kwConsumo;
         this.equipamento = equipamento;
@@ -39,11 +42,11 @@ public class Consumo {
         this.id = id;
     }
 
-    public Timestamp getDataHora() {
+    public LocalDateTime getDataHora() {
         return dataHora;
     }
 
-    public void setDataHora(Timestamp dataHora) {
+    public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
     }
 
